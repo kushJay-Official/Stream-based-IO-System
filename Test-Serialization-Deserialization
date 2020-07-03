@@ -1,0 +1,69 @@
+#Program for Serialization and DeSerialization
+
+package streambasediosystem;
+
+import java.io.*;
+
+public class TestSerializationDeserialization {
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
+        File fname =new File("Cart.dat");
+
+        doSerial(fname);
+        doDeSerial(fname);
+    }
+    /*Deserialization*/
+    private static void doDeSerial(File fn) throws IOException, ClassNotFoundException {
+        FileInputStream fis=new FileInputStream(fn);
+        ObjectInputStream in=new ObjectInputStream(fis);
+        Product p;
+        try{
+            while (true){
+               p=(Product)in.readObject();
+               System.out.println(p);
+            }
+        }catch (IOException e){
+            if(in!=null)
+                in.close();
+            System.out.println("End of file....");
+        }
+    }
+
+    /* Serialization*/
+    private static void doSerial(File fn) throws IOException {
+
+        FileOutputStream fos=new FileOutputStream(fn);
+        ObjectOutputStream ot=new ObjectOutputStream(fos);
+
+        InputStreamReader isr=new InputStreamReader(System.in);
+        BufferedReader b= new BufferedReader(isr);
+
+        int id; String nm,ch="y"; float pr;
+        Product p;
+        while (ch.equals("y")){
+            System.out.println("Enter Product Details...\t ID \t Name \t Price");
+            id=Integer.parseInt(b.readLine());
+            nm=b.readLine();
+            pr=Float.parseFloat(b.readLine());
+            p=new Product(id,nm,pr);
+            ot.writeObject(p);
+            System.out.print("Want to Add another....(y/n)");
+            ch=b.readLine();
+        }
+    }
+}
+
+import java.io.Serializable;
+
+public class Product implements Serializable {
+    private int pid;
+    private String nm;
+    private float pprc;
+
+    public Product(int id,String s, float p){
+        pid=id; nm=s;pprc=p;
+    }
+    public String toSt(){
+        return "["+pid+","+nm+","+pprc+"]";
+    }
+}
+
